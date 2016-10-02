@@ -1,0 +1,95 @@
+<project name="CWDUIMAP" basedir="." default="main">
+	<property name="my.abs.path" location=""/>
+	<property name="tests.gui.dir" value="${my.abs.path}" />
+	<property name="testset.name" value="sanity" />
+	
+	<!--<property name="javalibs.dir" value="C:\JavaJars" />-->
+	
+	<property name="build.dir" value="build" />
+	<property name="build.testreports.dir" value="${build.dir}\testreports" />
+	
+	<path id="lib.testng">
+		<fileset dir="${tests.gui.dir}\supportlibraries" includes="testng-6.8.8.jar"/>
+	</path>
+	<taskdef resource="testngtasks" classpathref="lib.testng" />
+	
+	  <!-- Define the CLASSPATH -->
+	<path id="libs.craft.selenium">
+			<pathelement location="${tests.gui.dir}" />
+			<fileset dir="${tests.gui.dir}\supportlibraries" includes="*.jar" />
+	</path>
+	
+	<target name="clean">
+		<echo message="Cleaning up old builds..." />
+		<delete dir="${build.dir}" />
+	</target>
+	
+	<!-- include project build code here as applicable -->
+	<target name="compile" depends="clean"
+          description="Compile Java sources">
+	<javac srcdir="${tests.gui.dir}"  classpathref = "libs.craft.selenium" includeantruntime = "NO"          source="1.7"
+        target="1.7" />
+   
+	</target>
+	
+	<target name="selenium-ui-tests" depends="compile">
+		<mkdir dir="${build.testreports.dir}" />
+		
+		<!--<path id=s"libs.craft.selenium">
+			<pathelement location="${tests.gui.dir}" />
+			<fileset dir="${tests.gui.dir}\supportlibraries" includes="*.jar" />
+		</path>-->
+		
+		<!-- Example of parallel execution of Selenium tests on multiple browsers -->
+		<parallel threadcount="2">
+<!--			<sequential>
+				<mkdir dir="${build.testreports.dir}\Chrome" />
+				<mkdir dir="${build.testreports.dir}\Chrome\CRAFT" />
+				<testng outputdir="${build.testreports.dir}\Chrome"
+						workingdir="${tests.gui.dir}"
+						haltonfailure="true"
+						classpathref="libs.craft.selenium">
+					
+					<sysproperty key="Browser" value="Chrome"/>
+					<sysproperty key="ReportPath" 
+								value="${basedir}\${build.testreports.dir}\Chrome\CRAFT"/>
+					
+					<xmlfileset dir="${tests.gui.dir}" includes="testng_${testset.name}.xml" />
+				</testng>
+			</sequential>
+			<sequential>
+				<mkdir dir="${build.testreports.dir}\IE" />
+				<mkdir dir="${build.testreports.dir}\IE\CRAFT" />
+				<testng outputdir="${build.testreports.dir}\IE"
+						workingdir="${tests.gui.dir}"
+						haltonfailure="true"
+						classpathref="libs.craft.selenium">
+					
+					<sysproperty key="Browser" value="InternetExplorer"/>
+					<sysproperty key="ReportPath" 
+								value="${basedir}\${build.testreports.dir}\IE\CRAFT"/>
+					
+					<xmlfileset dir="${tests.gui.dir}" includes="testng_${testset.name}.xml" />
+				</testng>
+			</sequential>	-->	
+			
+			<sequential>
+				<mkdir dir="${build.testreports.dir}\Firefox" />
+				<mkdir dir="${build.testreports.dir}\Firefox\CRAFT" />
+				<testng outputdir="${build.testreports.dir}\Firefox"
+						workingdir="${tests.gui.dir}"
+						haltonfailure="true"
+						classpathref="libs.craft.selenium">
+					
+					<sysproperty key="Browser" value="Firefox"/>
+					<sysproperty key="ReportPath" 
+								value="${basedir}\${build.testreports.dir}\Firefox\CRAFT"/>
+					
+					<xmlfileset dir="${tests.gui.dir}" includes="testng_${testset.name}.xml" />
+				</testng>
+			</sequential>
+		</parallel>
+	</target>
+	
+	<target name="main" depends="clean,selenium-ui-tests" />
+</project>
